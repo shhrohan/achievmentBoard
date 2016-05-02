@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -312,7 +311,7 @@ public class Game implements Serializable {
 	private static List<Team> availableTeams = new ArrayList<>();
 	Map<Player, Long> opponent_1_playerMap = null;
 	Map<Player, Long> opponent_2_playerMap = null;
-
+	private static List<Long> TIME_STAMPS = new ArrayList<>();
 	public static void setup() {
 		availableTeams.addAll(new ArrayList<Team>(Team.select(null)));
 	}
@@ -325,7 +324,7 @@ public class Game implements Serializable {
 		Date end = DateUtils.addMinutes(start, 3);
 		this.startTime = start.getTime();
 		this.endTime = end.getTime();
-		List<Long> TIME_STAMPS = new ArrayList<>();
+		
 		for (Long i = this.startTime; i < this.endTime; i++)
 			TIME_STAMPS.add(i);
 
@@ -337,6 +336,9 @@ public class Game implements Serializable {
 				.printInNewLine(this.opponentTeam_1_Team.getName() + " == VS == " + this.opponentTeam_2_Team.getName());
 		PrintUtil.printInNewLine(this.opponentTeam_1_Team.getName() + ":" + this.opponentTeam_1_Team.getPlayers());
 		PrintUtil.printInNewLine(this.opponentTeam_2_Team.getName() + ":" + this.opponentTeam_2_Team.getPlayers());
+
+		saveEvent(this.opponentTeam_1_Team.getName(), " == VS == ", this.opponentTeam_2_Team.getName());
+
 		// set Player join times and health
 		this.opponent_1_PlayerJoinTimes = new ArrayList<>();
 		this.opponent_2_PlayerJoinTimes = new ArrayList<>();
@@ -362,6 +364,8 @@ public class Game implements Serializable {
 			Event event = new Event();
 			assignRoles(event);
 			event.setAction(Utils.getRandomObject(actions));
+			event.setStartTime(Utils.getRandomObject(TIME_STAMPS));
+			Event.insert(event);
 
 			for (Statistic attackerStat : event.getAttacker().getStatistics()) {
 				if (attackerStat.getName().equals(event.getAction().getName())) {
@@ -373,20 +377,26 @@ public class Game implements Serializable {
 
 					if (this.opponent_1_playerMap.containsKey(event.getDefender())) {
 						long defender_health = this.opponent_1_playerMap.get(event.getDefender());
-
 						defender_health -= attackerStat.getWeight() * defender_health / 100l;
 
 						if (defender_health <= 0l) {// remove dead defender
 							this.opponent_1_playerMap.remove(event.getDefender());
 							// populate
 							PrintUtil.printInNewLine(event.getDefender().getName() + " died :(");
+							saveEvent(event.getDefender().getName(), "has ", "died :(");
+
 							PrintUtil.printInNewLine(this.opponentTeam_1_Team.getName() + " has "
 									+ this.opponent_1_playerMap.size() + " players alive !!");
+
+							saveEvent(this.opponentTeam_1_Team.getName() + " has ",
+									String.valueOf(this.opponent_1_playerMap.size()), " players alive !!");
 						} else {
 							this.opponent_1_playerMap.put(event.getDefender(), defender_health);
 							// populate
 							PrintUtil.printInNewLine(
 									event.getDefender().getName() + " took attack. [Health : " + defender_health + "]");
+							saveEvent(event.getDefender().getName(), " took attack. ",
+									"[Health : " + defender_health + "]");
 						}
 
 					} else {
@@ -397,13 +407,18 @@ public class Game implements Serializable {
 							this.opponent_2_playerMap.remove(event.getDefender());
 							// populate
 							PrintUtil.printInNewLine(event.getDefender().getName() + " died :(");
+							saveEvent(event.getDefender().getName(), "has ", "died :(");
 							PrintUtil.printInNewLine(this.opponentTeam_2_Team.getName() + " has "
 									+ this.opponent_2_playerMap.size() + " players alive !!");
+							saveEvent(this.opponentTeam_2_Team.getName() + " has ",
+									String.valueOf(this.opponent_2_playerMap.size()), " players alive !!");
 						} else {
 							this.opponent_2_playerMap.put(event.getDefender(), defender_health);
 							// populate
 							PrintUtil.printInNewLine(
 									event.getDefender().getName() + " took attack. [Health : " + defender_health + "]");
+							saveEvent(event.getDefender().getName(), " took attack. ",
+									"[Health : " + defender_health + "]");
 						}
 					}
 				}
@@ -432,6 +447,7 @@ public class Game implements Serializable {
 						// populate
 						PrintUtil.printInNewLine(
 								event.getAttacker().getName() + " got achievement " + achievement.getName());
+						saveEvent(event.getAttacker().getName() , " got achievement " , achievement.getName());
 						Player.update(event.getAttacker());
 					}
 				}
@@ -442,12 +458,13 @@ public class Game implements Serializable {
 			if (this.opponent_1_playerMap.isEmpty()) {
 				// populate
 				PrintUtil.printInNewLine(this.opponentTeam_2_Team.getName() + " wins !!");
+				saveEvent(this.opponentTeam_2_Team.getName() , " wins !!" , null);
 				break;
 
 			} else if (this.opponent_2_playerMap.isEmpty()) {
 				// populate
 				PrintUtil.printInNewLine(this.opponentTeam_1_Team.getName() + " wins !!");
-				
+
 				break;
 			}
 		}
@@ -456,6 +473,22 @@ public class Game implements Serializable {
 		availableTeams.add(this.opponentTeam_1_Team);
 		availableTeams.add(this.opponentTeam_2_Team);
 
+	}
+
+	private void saveEvent(String attacker, String action, String defender) {
+		Event event = new Event();
+		event.setStartTime(Utils.getRandomObject(TIME_STAMPS));
+		event.setAttacker(new Player(attacker));
+		event.setAction(new Statistic(action));
+		event.setDefender(new Player(defender));
+		Event.insert(event);
+		
+		try {
+			Thread.sleep(800);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void assignRoles(Event event) {

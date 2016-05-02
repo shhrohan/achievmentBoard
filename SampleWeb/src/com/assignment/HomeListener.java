@@ -2,6 +2,9 @@ package com.assignment;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,12 +12,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.assignment.datastructures.Event;
 import com.assignment.datastructures.Game;
 
 /**
  * Servlet implementation class HomeListener
  */
-@WebServlet("/HomeListener")
+// @WebServlet("/HomeListener")
+@WebServlet(urlPatterns = { "/mySSE" }, name = "hello-sse", asyncSupported = true)
 public class HomeListener extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -40,37 +45,39 @@ public class HomeListener extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		// content type must be set to text/event-stream
-		response.setContentType("text/event-stream");
 
-		// encoding must be set to UTF-8
+		response.setContentType("text/event-stream");
 		response.setCharacterEncoding("UTF-8");
 
-		PrintWriter writer = response.getWriter();
+		Random random = new Random();
+		PrintWriter out = response.getWriter();
 
-		for (int i = 0; i < 10; i++) {
+		String next = "data: " + getData(random) + "\n\n";
 
-			writer.write("data: " + System.currentTimeMillis() + "\n\n");
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		writer.close();
+		System.out.println("sent");
+		out.write(next);
+		out.flush();
 
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+	private String getData(Random random) {
+
+		List<Event> events = Event.select(null);
+		List<Long> ids = new ArrayList<Long>();
+
+		StringBuilder stb = new StringBuilder();
+
+		for (Event e : events) {
+			ids.add(e.getId());
+			stb.append(e.getAttacker().getName() + " ");
+			stb.append(e.getAction().getName() + " ");
+			stb.append(e.getDefender().getName());
+			stb.append("|");
+		}
+
+		Event.delete(ids);
+
+		return String.valueOf(stb.toString());
 	}
 
 }

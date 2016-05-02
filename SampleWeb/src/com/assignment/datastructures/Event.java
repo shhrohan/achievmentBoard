@@ -21,7 +21,7 @@ public class Event implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final String DB_Table_Name = "Event";
+	private static final String DB_Table_Name = "event";
 	public static List<Long> ids = new ArrayList<>();
 
 	private Long id = new Long(0);

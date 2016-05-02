@@ -1,5 +1,8 @@
 package com.assignment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.assignment.datastructures.Game;
 
 public class Simulation extends Thread {
@@ -23,12 +26,14 @@ public class Simulation extends Thread {
 
 		Game.setup();
 
-		int i = 1;
-		while (i < 4) {
-			Simulation simulation = new Simulation(4);
+		int i = 0;
+		List<Integer> sizes = new ArrayList<>();
+		sizes.add(3);
+		sizes.add(4);
+		
+		while (i++ < 20) {
+			Simulation simulation = new Simulation(Utils.getRandomObject(sizes));
 			synchronized (simulation) {
-
-				System.out.println("##################### Run " + i++ + " ######################");
 				simulation.start();
 				try {
 					simulation.wait();

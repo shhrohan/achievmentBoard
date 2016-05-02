@@ -113,7 +113,7 @@ public class Model {
 		query += "from" + " ";
 		query += DATABASE + "." + table;
 
-		if (idValues != null) {
+		if (idValues != null && idValues.size() > 0) {
 			query += " WHERE id IN (" + idValues.get(0);
 
 			for (int i = 1; i < idValues.size(); i++)
@@ -131,7 +131,7 @@ public class Model {
 
 		String query = "DELETE FROM " + table;
 
-		if (idValue != null) {
+		if (idValue != null && idValue.size() > 0) {
 			query += " WHERE id IN (" + idValue.get(0);
 
 			for (int i = 1; i < idValue.size(); i++)
