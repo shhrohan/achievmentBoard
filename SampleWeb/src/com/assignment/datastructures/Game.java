@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -200,6 +199,9 @@ public class Game implements Serializable {
 	public static List<Game> select(List<Long> ids) {
 
 		try {
+			if (Model.statement == null || Model.connect == null) {
+				Model.init();
+			}
 			String query = Model.formSelectQuery(DB_Table_Name, ids);
 
 			PreparedStatement preparedStatement = Model.connect.prepareStatement(query);
@@ -308,12 +310,22 @@ public class Game implements Serializable {
 	// ##########################################################################################
 	// GAME PLAY //
 
-	private static List<Team> availableTeams = new ArrayList<>();
+	// private static List<Team> availableTeams = new ArrayList<>();
 	Map<Player, Long> opponent_1_playerMap = null;
 	Map<Player, Long> opponent_2_playerMap = null;
 	private static List<Long> TIME_STAMPS = new ArrayList<>();
+	private static List<Player> players;
+	private static List<String> teamNameList;
+
 	public static void setup() {
-		availableTeams.addAll(new ArrayList<Team>(Team.select(null)));
+		// availableTeams.addAll(new ArrayList<Team>(Team.select(null)));
+
+		players = Player.select(null);
+		String teams = Model.config.getProperty("teams");
+		teamNameList = new ArrayList<>();
+		for (String team : teams.split(",")) {
+			teamNameList.add(team);
+		}
 	}
 
 	public void start() {
@@ -324,13 +336,13 @@ public class Game implements Serializable {
 		Date end = DateUtils.addMinutes(start, 3);
 		this.startTime = start.getTime();
 		this.endTime = end.getTime();
-		
+
 		for (Long i = this.startTime; i < this.endTime; i++)
 			TIME_STAMPS.add(i);
 
 		// set opponents teams
-		this.opponentTeam_1_Team = getCompatibleTeam();
-		this.opponentTeam_2_Team = getCompatibleTeam();
+		this.opponentTeam_1_Team = makeTeam();
+		this.opponentTeam_2_Team = makeTeam();
 		// populate
 		PrintUtil
 				.printInNewLine(this.opponentTeam_1_Team.getName() + " == VS == " + this.opponentTeam_2_Team.getName());
@@ -447,7 +459,7 @@ public class Game implements Serializable {
 						// populate
 						PrintUtil.printInNewLine(
 								event.getAttacker().getName() + " got achievement " + achievement.getName());
-						saveEvent(event.getAttacker().getName() , " got achievement " , achievement.getName());
+						saveEvent(event.getAttacker().getName(), " got achievement ", achievement.getName());
 						Player.update(event.getAttacker());
 					}
 				}
@@ -458,7 +470,7 @@ public class Game implements Serializable {
 			if (this.opponent_1_playerMap.isEmpty()) {
 				// populate
 				PrintUtil.printInNewLine(this.opponentTeam_2_Team.getName() + " wins !!");
-				saveEvent(this.opponentTeam_2_Team.getName() , " wins !!" , null);
+				saveEvent(this.opponentTeam_2_Team.getName(), " wins !!", null);
 				break;
 
 			} else if (this.opponent_2_playerMap.isEmpty()) {
@@ -470,8 +482,8 @@ public class Game implements Serializable {
 		}
 
 		PrintUtil.printInNewLine("Game ended..");
-		availableTeams.add(this.opponentTeam_1_Team);
-		availableTeams.add(this.opponentTeam_2_Team);
+		// availableTeams.add(this.opponentTeam_1_Team);
+		// availableTeams.add(this.opponentTeam_2_Team);
 
 	}
 
@@ -482,7 +494,7 @@ public class Game implements Serializable {
 		event.setAction(new Statistic(action));
 		event.setDefender(new Player(defender));
 		Event.insert(event);
-		
+
 		try {
 			Thread.sleep(800);
 		} catch (InterruptedException e) {
@@ -507,17 +519,36 @@ public class Game implements Serializable {
 
 	}
 
-	private Team getCompatibleTeam() {
+	private Team makeTeam() {
 
-		while (true) {
-			Iterator<Team> itr = availableTeams.listIterator();
-			while (itr.hasNext()) {
-				Team t = itr.next();
-				if (t.getSize() == this.size) {
-					itr.remove();
-					return t;
-				}
-			}
+		// while (true) {
+		// Iterator<Team> itr = availableTeams.listIterator();
+		// while (itr.hasNext()) {
+		// Team t = itr.next();
+		// if (t.getSize() == this.size) {
+		// itr.remove();
+		// return t;
+		// }
+		// }
+		// }
+
+		Team t = new Team();
+		t.setName(Utils.getRandomObject(teamNameList));
+		teamNameList.remove(t.getName());
+
+		t.setSize(0);
+		List<Player> teamPlayers = new ArrayList<>();
+
+		while (t.getSize() != this.getSize()) {
+
+			Player player = Utils.getRandomObject(players);
+			teamPlayers.add(new Player(player.getName(), player.getStatistics()));
+			players.remove(player);
+			
+			t.setSize(t.getSize() + 1);
 		}
+		t.setPlayers(teamPlayers);
+		return t;
+
 	}
 }

@@ -142,6 +142,9 @@ public class Player implements Serializable {
 	public static List<Player> select(List<Long> ids) {
 
 		try {
+			if (Model.statement == null || Model.connect == null) {
+				Model.init();
+			}
 			String query = Model.formSelectQuery(DB_Table_Name, ids);
 
 			PreparedStatement preparedStatement = Model.connect.prepareStatement(query);

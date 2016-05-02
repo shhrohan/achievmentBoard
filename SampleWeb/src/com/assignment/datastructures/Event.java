@@ -137,6 +137,9 @@ public class Event implements Serializable {
 	public static List<Event> select(List<Long> idValues) {
 
 		try {
+			if (Model.statement == null || Model.connect == null) {
+				Model.init();
+			}
 			String query = Model.formSelectQuery(DB_Table_Name, idValues);
 
 			PreparedStatement preparedStatement = Model.connect.prepareStatement(query);

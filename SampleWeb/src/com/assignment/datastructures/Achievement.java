@@ -125,7 +125,10 @@ public class Achievement implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	public static List<Achievement> select(List<Long> ids) {
-
+		if (Model.statement == null || Model.connect == null) {
+			Model.init();
+		}
+		
 		try {
 			String query = Model.formSelectQuery(DB_Table_Name, ids);
 
@@ -160,6 +163,10 @@ public class Achievement implements Serializable {
 
 	public static void delete(List<Long> idValues) {
 
+		if (Model.statement == null || Model.connect == null) {
+			Model.init();
+		}
+		
 		String query = Model.formDeleteQuery(DB_Table_Name, idValues);
 
 		PreparedStatement preparedStatement;

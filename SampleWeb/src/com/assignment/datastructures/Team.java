@@ -139,10 +139,10 @@ public class Team implements Serializable {
 	@SuppressWarnings("unchecked")
 	public static List<Team> select(List<Long> ids) {
 
-		if (Model.statement == null || Model.connect == null) {
-			Model.init();
-		}
 		try {
+			if (Model.statement == null || Model.connect == null) {
+				Model.init();
+			}
 			String query = Model.formSelectQuery(DB_Table_Name, ids);
 
 			PreparedStatement preparedStatement = Model.connect.prepareStatement(query);
