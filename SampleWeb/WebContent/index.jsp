@@ -69,15 +69,16 @@
 						<font face="verdana" color="green">Achievements</font>
 					</div></td>
 			</tr>
-			<tr style="width: 100%">
+			<tr>
 				<td align="left"><div
 						style="height: 500px; overflow-y: scroll; overflow-x: hidden"
 						id="events"></div></td>
-				<td align="left" height="300px"><div
-						style="height 500px: scroll; overflow-x: hidden" id="achievements"></div></td>
+				<td align="left"><div
+						style="height: 500px;" scroll; overflow-x: hidden" id="achievements"></div></td>
 			</tr>
 			<tr>
-				<td align="center" colspan="2"><button id="clear" onclick="clearevents()">clear</button></td>
+				<td align="center" colspan="2"><button id="clear"
+						onclick="clearevents()">clear</button></td>
 
 			</tr>
 
