@@ -21,7 +21,7 @@
 				<td align="center"><input type="text" name="name" /></td>
 				<td align="center"><select id="stat" name="stat">
 						<%
-							ArrayList<Statistic> stats = (java.util.ArrayList) request.getAttribute("stats");
+							ArrayList<Statistic> stats = (java.util.ArrayList<Statistic>) request.getAttribute("stats");
 							for (Statistic stat : stats) {
 								out.print("<option value='" + stat.getId() + "'>" + stat.getName() + "</option>");
 							}
