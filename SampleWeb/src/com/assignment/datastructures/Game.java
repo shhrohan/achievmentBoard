@@ -10,10 +10,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -309,7 +309,7 @@ public class Game implements Serializable {
 	// ##########################################################################################
 	// GAME PLAY //
 
-	private static BlockingQueue<Team> availableTeams = new ArrayBlockingQueue<Team>(1024);
+	private static List<Team> availableTeams = new ArrayList<>();
 	Map<Player, Long> opponent_1_playerMap = null;
 	Map<Player, Long> opponent_2_playerMap = null;
 
@@ -409,7 +409,8 @@ public class Game implements Serializable {
 				}
 			}
 
-			// event occurred now evaluate event
+			// event occurred now evaluate event and assign achievements if
+			// applicable
 			for (Achievement achievement : Achievement.select(null)) {
 
 				int count = 0;
@@ -429,7 +430,8 @@ public class Game implements Serializable {
 					if (event.getAttacker().getAchievements().contains(achievement) == false) {
 						event.getAttacker().getAchievements().add(achievement);
 						// populate
-						PrintUtil.printInNewLine(event.getAttacker().getName() + " got achievement " + achievement.getName());
+						PrintUtil.printInNewLine(
+								event.getAttacker().getName() + " got achievement " + achievement.getName());
 						Player.update(event.getAttacker());
 					}
 				}
@@ -441,16 +443,19 @@ public class Game implements Serializable {
 				// populate
 				PrintUtil.printInNewLine(this.opponentTeam_2_Team.getName() + " wins !!");
 				break;
-				
+
 			} else if (this.opponent_2_playerMap.isEmpty()) {
 				// populate
 				PrintUtil.printInNewLine(this.opponentTeam_1_Team.getName() + " wins !!");
+				
 				break;
 			}
-
 		}
 
 		PrintUtil.printInNewLine("Game ended..");
+		availableTeams.add(this.opponentTeam_1_Team);
+		availableTeams.add(this.opponentTeam_2_Team);
+
 	}
 
 	private void assignRoles(Event event) {
@@ -470,28 +475,16 @@ public class Game implements Serializable {
 	}
 
 	private Team getCompatibleTeam() {
-		Team team = null;
 
-		try {
-			while (true) {
-
-				if (this.opponentTeam_1_Team == null) {
-					team = availableTeams.take();
-					if (team.getSize() == this.size)
-						return team;
-				} else {
-					team = availableTeams.take();
-					if (team.getSize() == this.opponentTeam_1_Team.getSize())
-						return team;
+		while (true) {
+			Iterator<Team> itr = availableTeams.listIterator();
+			while (itr.hasNext()) {
+				Team t = itr.next();
+				if (t.getSize() == this.size) {
+					itr.remove();
+					return t;
 				}
-				Thread.sleep(1000);
 			}
-
-		} catch (InterruptedException e) {
-			PrintUtil.printException(e);
 		}
-		return team;
-
 	}
-
 }

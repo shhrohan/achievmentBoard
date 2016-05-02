@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.assignment.datastructures.Game;
+
 /**
  * Servlet implementation class HomeListener
  */
@@ -24,6 +26,7 @@ public class HomeListener extends HttpServlet {
 		// TODO Auto-generated constructor stub
 		try {
 			Model.init();
+			Game.setup();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,9 +42,8 @@ public class HomeListener extends HttpServlet {
 		// TODO Auto-generated method stub
 
 		response.getWriter().append("Served at Rohan localserver: ").append(request.getContextPath());
-
 		PrintUtil.printInNewLine("received..");
-
+		
 		
 
 	}

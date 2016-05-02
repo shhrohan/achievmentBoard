@@ -2,18 +2,42 @@ package com.assignment;
 
 import com.assignment.datastructures.Game;
 
-public class Simulation {
+public class Simulation extends Thread {
+
+	int gameSize = -1;
+
+	public Simulation() {
+	}
+
+	public Simulation(int size) {
+		this.gameSize = size;
+	}
+
+	@Override
+	public void run() {
+		Game game = new Game(this.gameSize);
+		game.start();
+	}
 
 	public static void main(String[] args) {
 
 		Game.setup();
 
-		Game game = new Game(3);
+		int i = 1;
+		while (i < 4) {
+			Simulation simulation = new Simulation(4);
+			synchronized (simulation) {
 
-		game.start();
-//		game = new Game(4);
-//
-//		game.start();
+				System.out.println("##################### Run " + i++ + " ######################");
+				simulation.start();
+				try {
+					simulation.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 
 	}
 
