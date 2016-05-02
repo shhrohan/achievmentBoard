@@ -1,6 +1,7 @@
 package com.assignment;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +21,7 @@ public class HomeListener extends HttpServlet {
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	
+
 	public HomeListener() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -39,12 +40,26 @@ public class HomeListener extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		
+		// content type must be set to text/event-stream
+		response.setContentType("text/event-stream");
 
-		response.getWriter().append("Served at Rohan localserver: ").append(request.getContextPath());
-		PrintUtil.printInNewLine("received..");
-		
-		
+		// encoding must be set to UTF-8
+		response.setCharacterEncoding("UTF-8");
+
+		PrintWriter writer = response.getWriter();
+
+		for (int i = 0; i < 10; i++) {
+
+			writer.write("data: " + System.currentTimeMillis() + "\n\n");
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		writer.close();
 
 	}
 
