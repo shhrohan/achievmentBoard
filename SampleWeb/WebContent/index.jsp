@@ -56,6 +56,10 @@
 				<td><span>Game Play Simulation : </span></td>
 				<td><button id="start" onclick="start()">Start</button></td>
 				<td><button id="stop" disabled="disabled" onclick="stop()">Stop</button></td>
+				<td><a href="./AddStatistic" style="color: green;"> Add
+						Statistic</a></td>
+				<td><a href="./AddAchievement" style="color: green;"> Add
+						Achievement</a></td>
 			</tr>
 		</table>
 	</div>
@@ -74,7 +78,8 @@
 						style="height: 500px; overflow-y: scroll; overflow-x: hidden"
 						id="events"></div></td>
 				<td align="left"><div
-						style="height: 500px;" scroll; overflow-x: hidden" id="achievements"></div></td>
+						style="height: 500px; scroll; overflow-x: hidden"
+						id="achievements"></div></td>
 			</tr>
 			<tr>
 				<td align="center" colspan="2"><button id="clear"

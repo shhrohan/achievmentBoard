@@ -71,9 +71,15 @@ public class AddAchievement extends HttpServlet {
 		stat.setWeight(0d);
 		stat.setValue(value);
 		list.add(stat);
+		ach.setCriteria(list);
 
-		Achievement.insert(ach);
-
+		Long idAch = Achievement.insert(ach);
+		
+		ids.clear();
+		ids.add(idAch);
+		
+		System.out.println(Achievement.select(ids));
+		
 		doGet(request, response);
 	}
 

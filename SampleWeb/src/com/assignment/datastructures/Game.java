@@ -521,17 +521,6 @@ public class Game implements Serializable {
 
 	private Team makeTeam() {
 
-		// while (true) {
-		// Iterator<Team> itr = availableTeams.listIterator();
-		// while (itr.hasNext()) {
-		// Team t = itr.next();
-		// if (t.getSize() == this.size) {
-		// itr.remove();
-		// return t;
-		// }
-		// }
-		// }
-
 		Team t = new Team();
 		t.setName(Utils.getRandomObject(teamNameList));
 		teamNameList.remove(t.getName());
