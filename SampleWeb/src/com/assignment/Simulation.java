@@ -11,9 +11,9 @@ public class Simulation {
 		Game game = new Game(3);
 
 		game.start();
-		game = new Game(4);
-
-		game.start();
+//		game = new Game(4);
+//
+//		game.start();
 
 	}
 

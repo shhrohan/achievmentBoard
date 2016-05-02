@@ -94,8 +94,8 @@ public class SetUpInitialData {
 		ids.add(Statistic.ids.get(2));
 		stats = Statistic.select(ids);
 
-		stats.get(0).setValue(100l);
-		stats.get(1).setValue(75l);
+		stats.get(0).setValue(4l);
+		stats.get(1).setValue(2l);
 
 		Achievement.insert(new Achievement(achievement, stats));
 
@@ -103,7 +103,7 @@ public class SetUpInitialData {
 		ids = new ArrayList<>();
 		ids.add(Statistic.ids.get(1));
 		stats = Statistic.select(ids);
-		stats.get(0).setValue(500l);
+		stats.get(0).setValue(2l);
 		Achievement.insert(new Achievement(achievement, stats));
 	}
 
