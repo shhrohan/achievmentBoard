@@ -18,25 +18,22 @@ public class Model {
 	public static Statement statement = null;
 
 	private static String JDBC_CONN_PREFIX = "jdbc:mysql://";
-	private static String HOST = "localhost";
-	private static String DATABASE = "achievement_board";
-	private static String user = "root";
-	private static String passwd = "";
 	public static Config config;
 
 	public static Map<String, List<String>> columnNames = new HashMap<String, List<String>>();
 
 	public static boolean init() {
 
-		if(config == null){
+		if (config == null) {
 			config = new Config();
 		}
-		
+
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			connect = DriverManager.getConnection(
-					JDBC_CONN_PREFIX + HOST + "/" + DATABASE + "?" + "user=" + user + "&password=" + passwd);
+					JDBC_CONN_PREFIX + config.getProperty("host") + "/" + config.getProperty("database") + "?" + "user="
+							+ config.getProperty("user") + "&password=" + config.getProperty("password"));
 
 			statement = connect.createStatement();
 			PrintUtil.printInNewLine("connection established.");
@@ -75,7 +72,7 @@ public class Model {
 		List<String> columns = columnNames.get(table);
 
 		String query = "insert into ";
-		query += DATABASE + "." + table + " ";
+		query += config.getProperty("database") + "." + table + " ";
 		query += "(" + columns.get(1);
 
 		for (int i = 2; i < columns.size(); i++)
@@ -99,7 +96,7 @@ public class Model {
 		// + " WHERE USER_ID = ?";
 
 		String query = "UPDATE ";
-		query += DATABASE + "." + table + " Set ";
+		query += config.getProperty("database") + "." + table + " Set ";
 		query += columns.get(1) + " = ?";
 
 		for (int i = 2; i < columns.size(); i++)
@@ -114,7 +111,7 @@ public class Model {
 
 		String query = "SELECT" + " * ";
 		query += "from" + " ";
-		query += DATABASE + "." + table;
+		query += config.getProperty("database") + "." + table;
 
 		if (idValues != null && idValues.size() > 0) {
 			query += " WHERE id IN (" + idValues.get(0);
