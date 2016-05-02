@@ -16,9 +16,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
 
-import com.assignment.Model;
-import com.assignment.PrintUtil;
-import com.assignment.Utils;
+import com.assignment.model.Model;
+import com.assignment.utils.PrintUtil;
+import com.assignment.utils.Utils;
 
 public class Game implements Serializable {
 

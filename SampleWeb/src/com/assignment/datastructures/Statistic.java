@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.assignment.Model;
-import com.assignment.PrintUtil;
+import com.assignment.model.Model;
+import com.assignment.utils.PrintUtil;
 
 public class Statistic implements Serializable {
 

@@ -1,4 +1,4 @@
-package com.assignment;
+package com.assignment.utils;
 
 public class PrintUtil {
 

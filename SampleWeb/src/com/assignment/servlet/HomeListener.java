@@ -1,4 +1,4 @@
-package com.assignment;
+package com.assignment.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.assignment.datastructures.Event;
 import com.assignment.datastructures.Game;
+import com.assignment.model.Model;
 
 /**
  * Servlet implementation class HomeListener

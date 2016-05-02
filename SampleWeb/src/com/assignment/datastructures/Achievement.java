@@ -10,9 +10,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.assignment.Model;
-import com.assignment.PrintUtil;
-import com.assignment.Utils;
+import com.assignment.model.Model;
+import com.assignment.utils.PrintUtil;
+import com.assignment.utils.Utils;
 
 public class Achievement implements Serializable {
 

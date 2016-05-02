@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.assignment.Model;
 import com.assignment.datastructures.Achievement;
 import com.assignment.datastructures.Statistic;
+import com.assignment.model.Model;
 
 public class TestRunnerClass {
 
