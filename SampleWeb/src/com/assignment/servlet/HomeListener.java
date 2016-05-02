@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.assignment.datastructures.Event;
 import com.assignment.datastructures.Game;
 import com.assignment.model.Model;
+import com.assignment.utils.PrintUtil;
 
 /**
  * Servlet implementation class HomeListener
@@ -50,18 +50,15 @@ public class HomeListener extends HttpServlet {
 		response.setContentType("text/event-stream");
 		response.setCharacterEncoding("UTF-8");
 
-		Random random = new Random();
 		PrintWriter out = response.getWriter();
-
-		String next = "data: " + getData(random) + "\n\n";
-
-		System.out.println("sent");
+		String next = "data: " + getData() + "\n\n";
+		PrintUtil.printInNewLine("Client request received..");
 		out.write(next);
 		out.flush();
 
 	}
 
-	private String getData(Random random) {
+	private String getData() {
 
 		List<Event> events = Event.select(null);
 		List<Long> ids = new ArrayList<Long>();
